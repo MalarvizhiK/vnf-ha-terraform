@@ -63,8 +63,19 @@ resource "ibm_is_security_group_rule" "ubuntu_sg_rule_tcp" {
     }
  }
 
-resource "ibm_is_security_group_rule" "ubuntu_sg_rule_all_out" {
+resource "ibm_is_security_group_rule" "ubuntu_sg_rule_out_icmp" {
     depends_on = [ibm_is_security_group_rule.ubuntu_sg_allow_ssh]
+    group      = ibm_is_security_group.ubuntu_vsi_sg.id
+  direction  = "outbound"
+  remote     = "0.0.0.0/0"
+  icmp {
+    code = 0
+    type = 8
+  }
+}
+
+resource "ibm_is_security_group_rule" "ubuntu_sg_rule_all_out" {
+    depends_on = [ibm_is_security_group_rule.ubuntu_sg_rule_out_icmp]
     group      = ibm_is_security_group.ubuntu_vsi_sg.id
   direction  = "outbound"
   remote     = "0.0.0.0/0"
