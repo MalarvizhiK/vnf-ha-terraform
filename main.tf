@@ -63,19 +63,8 @@ resource "ibm_is_security_group_rule" "ubuntu_sg_rule_tcp" {
     }
  }
 
-resource "ibm_is_security_group_rule" "ubuntu_sg_rule_out_icmp" {
-    depends_on = [ibm_is_security_group_rule.ubuntu_sg_allow_ssh]
-    group      = ibm_is_security_group.ubuntu_vsi_sg.id
-  direction  = "outbound"
-  remote     = "0.0.0.0/0"
-  icmp {
-    code = 0
-    type = 8
-  }
-}
-
 resource "ibm_is_security_group_rule" "ubuntu_sg_rule_all_out" {
-    depends_on = [ibm_is_security_group_rule.ubuntu_sg_rule_out_icmp]
+    depends_on = [ibm_is_security_group_rule.ubuntu_sg_allow_ssh]
     group      = ibm_is_security_group.ubuntu_vsi_sg.id
   direction  = "outbound"
   remote     = "0.0.0.0/0"
@@ -119,100 +108,32 @@ resource "null_resource" "ubuntu_provisioner" {
     user  = "root"
     port  = 22
     agent = true
-    private_key = file(var.ubuntu_private_key_file)
+    private_key = file("/Users/malark/.ssh/id_rsa")
   }
 
   // copy our example script to the server
   provisioner "file" {
-    source      = "script/update_install.sh"
-    destination = "/root/update_install.sh"
+    source      = "script/install.sh"
+    destination = "/root/install.sh"
+  }
+  
+  // copy our example script to the server
+  provisioner "file" {
+    source      = "script/update_script.sh"
+    destination = "/root/update_script.sh"
   }
 
   // change permissions to executable and pipe its output into a new file
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /root/update_install.sh",
-      "bash /root/update_install.sh ${var.apikey} ${var.vpc_id} ${var.vpc_url} ${var.table_name} ${var.route_name} ${var.destination_ipv4_cidr_block} ${var.zone} ${var.mgmt_ip1} ${var.ext_ip1} ${var.mgmt_ip2} ${var.ext_ip2}  > /root/update_install.log",
+      "chmod +x /root/install.sh",
+      "bash /root/install.sh ${var.apikey} ${var.vpc_id} ${var.vpc_url} ${var.zone} ${var.mgmt_ip1} ${var.ext_ip1} ${var.mgmt_ip2} ${var.ext_ip2} ${ibm_is_instance.ubuntu_vsi.primary_network_interface[0].primary_ipv4_address} ${var.ha_password1} ${var.ha_password2}  > /root/install.log",
     ]
   }
 
   provisioner "local-exec" {
     # copy the log file back to CWD, which will be tested
-    command = "scp -o StrictHostKeyChecking=no root@${ibm_is_floating_ip.ubuntu_vsi_fip.address}:/root/update_install.log ."
+    command = "scp -o StrictHostKeyChecking=no root@${ibm_is_floating_ip.ubuntu_vsi_fip.address}:/root/install.log ."
   }
-}
-
-resource "null_resource" "ha1_provisioner" {
-  depends_on = [null_resource.ubuntu_provisioner]
-  triggers = {
-    public_ip = var.ha_fip1
-  }
-
-  connection {
-    type  = "ssh"
-    host  = var.ha_fip1
-    user  = "root"
-    port  = 22
-    agent = true
-    password = var.ha_password1
-  }
-
-  // copy our example script to the server
-  provisioner "file" {
-    source      = "temp/update_script.sh"
-    destination = "/config/update_script.sh"
-  }
-
-  // change permissions to executable and pipe its output into a new file
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /config/update_script.sh",
-      "bash /config/update_script.sh ${ibm_is_instance.ubuntu_vsi.primary_network_interface[0].primary_ipv4_address} '/config/update_script_ha1.log'", 
-    ]
-  }
-  /*
-  provisioner "local-exec" {
-    # copy the log file back to CWD, which will be tested
-    command = "scp -o StrictHostKeyChecking=no root@${var.ha_fip1}:/config/update_script_ha1.log ."
-  }
-  */
-}
-
-
-resource "null_resource" "ha2_provisioner" {
-  depends_on = [null_resource.ubuntu_provisioner]
-
-  triggers = {
-    public_ip = var.ha_fip2
-  }
-
-  connection {
-    type  = "ssh"
-    host  = var.ha_fip2
-    user  = "root"
-    port  = 22
-    agent = true
-    password = var.ha_password2
-  }
-
-  // copy our example script to the server
-  provisioner "file" {
-    source      = "temp/update_script.sh"
-    destination = "/config/update_script.sh"
-  }
-
-  // change permissions to executable and pipe its output into a new file
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /config/update_script.sh",
-      "bash /config/update_script.sh ${ibm_is_instance.ubuntu_vsi.primary_network_interface[0].primary_ipv4_address} '/config/update_script_ha2.log'",
-    ]
-  }
-  /*
-  provisioner "local-exec" {
-    # copy the log file back to CWD, which will be tested
-    command = "scp -o StrictHostKeyChecking=no root@${var.ha_fip2}:/config/update_script_ha2.log ."
-  }
-  */
 }
 

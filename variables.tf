@@ -43,11 +43,6 @@ variable "ubuntu_subnet_id" {
   description = "subnet1 ipv4 cidr block."
 }
 
-variable "ubuntu_private_key_file" {
-  default     = "/Users/malark/.ssh/id_rsa"
-  description = "Path to ubuntu private ssh key file."
-}
-
 variable "mgmt_ip1" {
   default     = ""
   description = "The management IP 1 of VNF."
@@ -71,31 +66,6 @@ variable "ext_ip2" {
 variable "ha_subnet_ipv4_cidr_block" {
   default     = ""
   description = "HA subnet ipv4 cidr block."
-}
-
-variable "destination_ipv4_cidr_block" {
-  default     = ""
-  description = "Destination ipv4 cidr block."
-}
-
-variable "table_name" {
-  default     = "ha-table"
-  description = "VPC Routing table name."
-}
-
-variable "route_name" {
-  default     = "ha-route"
-  description = "VPC Routing table route name."
-}
-
-variable "ha_fip1" {
-  default     = ""
-  description = "HA instance Floating IP Address 1."
-}
-
-variable "ha_fip2" {
-  default     = ""
-  description = "HA instance Floating IP Address 2."
 }
 
 variable "ha_password1" {
