@@ -38,6 +38,10 @@ sleep 10s;
 
 # apt install -y python3
 
+apt-get install -y sshpass
+
+sleep 20s;
+
 echo "Installing python3-pip ..."
 
 export DEBIAN_FRONTEND=noninteractive
@@ -81,10 +85,6 @@ sudo systemctl enable --now flask
 sudo service flask start
 
 sudo service flask status
-
-apt-get install -y sshpass
-
-sleep 20s;
 
 echo "Updating tgactive script ..."
 

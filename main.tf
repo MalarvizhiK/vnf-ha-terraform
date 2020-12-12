@@ -63,15 +63,27 @@ resource "ibm_is_security_group_rule" "ubuntu_sg_rule_tcp" {
     }
  }
 
+resource "ibm_is_security_group_rule" "ubuntu_sg_rule_out_icmp" {
+  depends_on = [ibm_is_security_group_rule.ubuntu_sg_rule_tcp]
+  group      = ibm_is_security_group.ubuntu_vsi_sg.id
+  direction  = "outbound"
+  remote     = "0.0.0.0/0"
+  icmp {
+    code = 0
+    type = 8
+  }
+}
+
 resource "ibm_is_security_group_rule" "ubuntu_sg_rule_all_out" {
-    depends_on = [ibm_is_security_group_rule.ubuntu_sg_allow_ssh]
-    group      = ibm_is_security_group.ubuntu_vsi_sg.id
+  depends_on = [ibm_is_security_group_rule.ubuntu_sg_rule_out_icmp]
+  group      = ibm_is_security_group.ubuntu_vsi_sg.id
   direction  = "outbound"
   remote     = "0.0.0.0/0"
 }
 
 //source vsi
 resource "ibm_is_instance" "ubuntu_vsi" {
+  depends_on = [ibm_is_security_group_rule.ubuntu_sg_rule_all_out]
   name           = "ubuntu-ha-vsi"
   image          = data.ibm_is_image.custom_image.id
   profile        = "bx2-2x8"
