@@ -16,15 +16,14 @@ ha2pwd="${11}"
 
 echo "Installing required packages ..."
 
-systemctl stop apt-daily.timer
-systemctl disable apt-daily.timer
+systemctl stop --now apt-daily{,-upgrade}.{timer,service}
 
-systemctl stop apt-daily.service
+systemctl disable --now apt-daily{,-upgrade}.{timer,service}
 
 systemctl kill --kill-who=all apt-daily.service
 
 # wait until `apt-get updated` has been killed
-while ! (systemctl list-units --all apt-daily.service | egrep -q '(dead|failed)')
+while ! (systemctl list-units --all apt-daily{,-upgrade}.{timer,service} | egrep -q '(dead|failed)')
 do
   sleep 1;
 done
@@ -42,12 +41,6 @@ sudo rm /var/lib/dpkg/lock-frontend
 echo "Removed lock files ..."
 
 sleep 30s;
-
-# sudo apt -y update
-
-# sleep 20s;
-
-# apt install -y python3
 
 sudo apt-get update
 
