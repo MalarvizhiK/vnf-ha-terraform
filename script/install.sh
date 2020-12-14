@@ -18,19 +18,19 @@ echo "Installing required packages ..."
 
 systemctl disable --now apt-daily{,-upgrade}.{timer,service}
 
-sleep 20s;
-
-sudo rm /var/lib/dpkg/lock
-
-sudo rm /var/lib/dpkg/lock-frontend
+sleep 60s;
 
 sudo rm /var/lib/apt/lists/lock
 
 sudo rm /var/cache/apt/archives/lock
 
+sudo rm /var/lib/dpkg/lock
+
+sudo rm /var/lib/dpkg/lock-frontend
+
 echo "Removed lock files ..."
 
-sleep 10s;
+sleep 30s;
 
 # sudo apt -y update
 
@@ -40,11 +40,11 @@ sleep 10s;
 
 sudo apt-get update
 
-sleep 20s;
+sleep 30s;
 
 apt-get install -y sshpass
 
-sleep 20s;
+sleep 30s;
 
 echo "Installing python3-pip ..."
 
@@ -52,19 +52,19 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get install -y python3-pip
 
-sleep 20s;
+sleep 30s;
 
 pip3 install --upgrade "ibm-vpc>=0.3.0"
  
 pip3 install flask
 
-sleep 20s;
+sleep 30s;
 
 echo "Clone ha fail over repository git"
 
 git clone "https://github.com/MalarvizhiK/vnf-ha-cloud-failover-func.git"
 
-sleep 10s;
+sleep 30s;
 
 cd vnf-ha-cloud-failover-func
 
