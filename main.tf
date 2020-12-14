@@ -118,7 +118,7 @@ resource "null_resource" "ubuntu_provisioner" {
     host  = ibm_is_floating_ip.ubuntu_vsi_fip.address
     user  = "root"
     port  = 22
-    agent = true
+    agent = false
     private_key = var.private_ssh_key_file
   }
 
