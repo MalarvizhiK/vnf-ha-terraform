@@ -141,5 +141,12 @@ resource "null_resource" "ubuntu_provisioner" {
       "bash /root/install.sh ${var.apikey} ${var.vpc_id} ${var.vpc_url} ${var.zone} ${var.mgmt_ip1} ${var.ext_ip1} ${var.mgmt_ip2} ${var.ext_ip2} ${ibm_is_instance.ubuntu_vsi.primary_network_interface[0].primary_ipv4_address} ${var.ha_password1} ${var.ha_password2}  > /root/install.log",
     ]
   }
+  
+  /*
+    provisioner "local-exec" {
+    # copy the log file back to CWD, which will be tested
+    command = "scp -o StrictHostKeyChecking=no root@${ibm_is_floating_ip.ubuntu_vsi_fip.address}:/root/install.log ."
+  }
+    */
 }
 
