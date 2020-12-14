@@ -120,7 +120,7 @@ resource "null_resource" "ubuntu_provisioner" {
     user  = "root"
     port  = 22
     agent = true
-    private_key = file("/Users/malark/.ssh/id_rsa")
+    private_key = file(var.private_ssh_key_file)
   }
 
   // copy our example script to the server

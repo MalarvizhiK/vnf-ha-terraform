@@ -38,6 +38,11 @@ variable "ssh_key" {
   description = "The ssh key to use. If unspecified, 'my-ssh-key' is used."
 }
 
+variable "private_ssh_key_file" {
+  default     = "~/.ssh/id_rsa"
+  description = "The private ssh key file to use. If unspecified, '~/.ssh/id_rsa' is used."
+}
+
 variable "ubuntu_subnet_id" {
   default     = ""
   description = "subnet1 ipv4 cidr block."
