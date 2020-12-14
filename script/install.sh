@@ -38,6 +38,10 @@ sleep 10s;
 
 # apt install -y python3
 
+sudo apt-get update
+
+sleep 20s;
+
 apt-get install -y sshpass
 
 sleep 20s;
