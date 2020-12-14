@@ -16,7 +16,18 @@ ha2pwd="${11}"
 
 echo "Installing required packages ..."
 
-systemctl disable --now apt-daily{,-upgrade}.{timer,service}
+systemctl stop apt-daily.timer
+systemctl disable apt-daily.timer
+
+systemctl stop apt-daily.service
+
+systemctl kill --kill-who=all apt-daily.service
+
+# wait until `apt-get updated` has been killed
+while ! (systemctl list-units --all apt-daily.service | egrep -q '(dead|failed)')
+do
+  sleep 1;
+done
 
 sleep 60s;
 
