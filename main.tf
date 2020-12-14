@@ -21,7 +21,6 @@ data "ibm_is_image" "custom_image" {
 # Provider block - Alias initialized tointeract with VNFSVC account
 ##############################################################################
 provider "ibm" {
-  ibmcloud_api_key = "eeZfQFlBE6QAlDDph-SoJwbXXLg-AaRPt-LCKkHr-cHR"
   generation       = var.generation
   region           = var.region
   ibmcloud_timeout = 300
@@ -120,7 +119,7 @@ resource "null_resource" "ubuntu_provisioner" {
     user  = "root"
     port  = 22
     agent = true
-    private_key = file(var.private_ssh_key_file)
+    private_key = var.private_ssh_key_file
   }
 
   // copy our example script to the server
