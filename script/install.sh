@@ -20,7 +20,7 @@ systemctl stop --now apt-daily{,-upgrade}.{timer,service}
 
 systemctl disable --now apt-daily{,-upgrade}.{timer,service}
 
-systemctl kill --kill-who=all apt-daily.service
+systemctl kill --kill-who=all apt-daily{,-upgrade}.{timer,service}
 
 # wait until `apt-get updated` has been killed
 while ! (systemctl list-units --all apt-daily{,-upgrade}.{timer,service} | egrep -q '(dead|failed)')
