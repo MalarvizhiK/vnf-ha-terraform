@@ -54,7 +54,7 @@ resource "ibm_is_security_group_rule" "ubuntu_sg_rule_tcp" {
     depends_on = [ibm_is_security_group_rule.ubuntu_sg_allow_ssh]
     group      = ibm_is_security_group.ubuntu_vsi_sg.id
     direction = "inbound"
-    remote = var.ha_subnet_ipv4_cidr_block
+    remote = var.f5_mgmt_ipv4_cidr_block
     // remote = "0.0.0.0/0"
     tcp  {
         port_min = 3000
@@ -89,7 +89,7 @@ resource "ibm_is_instance" "ubuntu_vsi" {
   resource_group = data.ibm_resource_group.rg.id
 
   primary_network_interface {
-    subnet          = var.ubuntu_subnet_id
+    subnet          = var.failover_function_subnet_id
     security_groups = [ibm_is_security_group.ubuntu_vsi_sg.id]
   }
 
@@ -119,7 +119,7 @@ resource "null_resource" "ubuntu_provisioner" {
     user  = "root"
     port  = 22
     agent = false
-    private_key = var.private_ssh_key_file
+    private_key = var.private_ssh_key
   }
 
   // copy our example script to the server
@@ -138,7 +138,7 @@ resource "null_resource" "ubuntu_provisioner" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /root/install.sh",
-      "bash /root/install.sh ${var.apikey} ${var.vpc_id} ${var.vpc_url} ${var.zone} ${var.mgmt_ip1} ${var.ext_ip1} ${var.mgmt_ip2} ${var.ext_ip2} ${ibm_is_instance.ubuntu_vsi.primary_network_interface[0].primary_ipv4_address} ${var.ha_password1} ${var.ha_password2}  > /root/install.log",
+      "bash /root/install.sh ${var.apikey} ${var.vpc_id} ${var.rias_api_url} ${var.zone} ${var.mgmt_ip1} ${var.ext_ip1} ${var.mgmt_ip2} ${var.ext_ip2} ${ibm_is_instance.ubuntu_vsi.primary_network_interface[0].primary_ipv4_address} ${var.ha_password1} ${var.ha_password2}  > /root/install.log",
     ]
   }
   
