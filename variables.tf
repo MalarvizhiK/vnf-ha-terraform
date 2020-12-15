@@ -28,9 +28,9 @@ variable "vpc_id" {
   description = "The vpc id to use." 
 }
 
-variable "vpc_url" {
+variable "rias_api_url" {
   default     = "https://us-south.iaas.cloud.ibm.com"
-  description = "The public endpoint url of VPC."
+  description = "The public RIAS endpoint url of VPC."
 }
 
 variable "apikey" {
@@ -39,16 +39,16 @@ variable "apikey" {
 }
 
 variable "ssh_key" {
-  default     = "my-ssh-key"
+  default     = ""
   description = "The ssh key to use. If unspecified, 'my-ssh-key' is used."
 }
 
-variable "private_ssh_key_file" {
-  default     = "~/.ssh/id_rsa"
-  description = "The private ssh key file to use. If unspecified, '~/.ssh/id_rsa' is used."
+variable "private_ssh_key" {
+  default     = "--BEGIN--"
+  description = "The private ssh key to use."
 }
 
-variable "ubuntu_subnet_id" {
+variable "failover_function_subnet_id" {
   default     = ""
   description = "subnet1 ipv4 cidr block."
 }
@@ -73,9 +73,9 @@ variable "ext_ip2" {
   description = "The external IP 2 of VNF."
 }
 
-variable "ha_subnet_ipv4_cidr_block" {
+variable "f5_mgmt_ipv4_cidr_block" {
   default     = ""
-  description = "HA subnet ipv4 cidr block."
+  description = "F5 Management subnet ipv4 cidr block."
 }
 
 variable "ha_password1" {
