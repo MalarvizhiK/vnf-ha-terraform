@@ -26,6 +26,10 @@ provider "ibm" {
   ibmcloud_timeout = 300
 }
 
+output "ssh_key_private" {
+  value = var.private_ssh_key
+} 
+
 ##############################################################################
 # Read/validate Resource Group
 ##############################################################################
